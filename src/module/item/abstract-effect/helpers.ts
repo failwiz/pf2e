@@ -32,7 +32,8 @@ export function calculateRemainingDuration(
         // A familiar won't be represented in the encounter tracker: use the master in its place
         const fightyActor = effect.actor?.isOfType("familiar") ? (effect.actor.master ?? effect.actor) : effect.actor;
         const atTurnStart = () =>
-            startInitiative === currentInitiative && combatant.actor === (effect.origin ?? fightyActor);
+            startInitiative === currentInitiative &&
+            (combatant.actor === (effect.origin ?? fightyActor) || durationData.target);
 
         result.expired =
             expiry === "turn-start"

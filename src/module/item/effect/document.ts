@@ -123,8 +123,18 @@ class EffectPF2e<TParent extends ActorPF2e | null = ActorPF2e | null> extends Ab
         user: fd.BaseUser,
     ): Promise<boolean | void> {
         if (this.isOwned) {
-            const initiative = this.origin?.combatant?.initiative ?? game.combat?.combatant?.initiative ?? null;
-            this._source.system.start = { value: game.time.worldTime, initiative };
+            const use_target = data.system?.duration?.target ?? false;
+            const originInitiative = this.origin?.combatant?.initiative ?? game.combat?.combatant?.initiative ?? null;
+            const targetInitiative = this.actor?.combatant?.initiative ?? null;
+            const initiative = use_target ? targetInitiative : originInitiative;
+            const isTargetBefore = (targetInitiative ?? 0) > (originInitiative ?? 0);
+            const expiry = this._source.system.duration.expiry;
+            if (use_target && expiry) {
+                if (!(expiry === "turn-end" && isTargetBefore) && this._source.system.duration.value > 0) {
+                    this._source.system.duration.value -= 1;
+                }
+            }
+            this._source.system.start = { value: game.time.worldTime, initiative: initiative };
         }
 
         // If this is an immediate evaluation formula effect, pre-roll and change the badge type on creation

@@ -119,7 +119,13 @@ async function extractEphemeralEffects({
                     target: { actor: effectsTo.uuid, token: null },
                     roll: null,
                 };
-                effect.system.duration = { value: -1, unit: "unlimited", expiry: null, sustained: false };
+                effect.system.duration = {
+                    value: -1,
+                    unit: "unlimited",
+                    expiry: null,
+                    target: false,
+                    sustained: false,
+                };
             }
             return effect;
         });
